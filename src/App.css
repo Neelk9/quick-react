@@ -40,3 +40,28 @@
 button {
   font-size: calc(10px + 2vmin);
 }
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  padding: 0 16px;
+}
+
+.course-card {
+  border: 1px solid #ccc;
+  padding: 16px;
+  text-align: center;
+}
+
+.course-title {
+  font-weight: bold;
+}
+
+.course-meets {
+  margin-top: 1em;
+}
+
+.course-title-section {
+  min-height: 80px;
+}
