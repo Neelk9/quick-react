@@ -6,6 +6,7 @@ import CourseList from './components/CourseList';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useJsonQuery } from './utilities/fetch';
+import TermPage from './components/TermPage';
 
 const queryClient = new QueryClient();
 
@@ -18,10 +19,10 @@ const App = () => {
   if (!schedule) return <h1>No schedule data found</h1>;
 
   return (
-      <div>
-        <Banner title={schedule.title} />
-        <CourseList courses={schedule.courses} />
-      </div>
+    <div>
+      <Banner title={schedule.title} />
+      <TermPage courses={schedule.courses} />
+    </div>
   );
   
 };
