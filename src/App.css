@@ -49,7 +49,7 @@ button {
 }
 
 .course-card {
-  border: 1px solid #ccc;
+  border: 2px solid #ccc;
   padding: 16px;
   text-align: center;
 }
@@ -64,4 +64,10 @@ button {
 
 .course-title-section {
   min-height: 80px;
+}
+
+.course-card-selected {
+  border: 2px solid lightgreen;
+  padding: 16px;
+  text-align: center;
 }
