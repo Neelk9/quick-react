@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../App.css';
 import { doesConflict } from '../utilities/timeConflict';
+import CourseForm from './CourseForm';
 
-const CourseList = ({ courses, selectedTerm, selectedCourses, setSelectedCourses, startEditing }) => {
-  
+const CourseList = ({ courses, selectedTerm, selectedCourses, setSelectedCourses, updateCourse }) => {
+
+  const [editingCourseId, setEditingCourseId] = useState(null);
+
   const toggleCourse = (id) => {
     const newSelectedCourses = new Set(selectedCourses);
     if (newSelectedCourses.has(id)) {
@@ -24,14 +27,26 @@ const CourseList = ({ courses, selectedTerm, selectedCourses, setSelectedCourses
     return false;
   };
 
+  const handleEdit = (id, e) => {
+    e.stopPropagation();
+    setEditingCourseId(id);
+  };
+
+  const handleCancel = () => {
+    setEditingCourseId(null);
+  };
+
   return (
     <div className="grid-container">
       {Object.entries(courses).map(([id, course]) => {
         if (course.term !== selectedTerm) return null;
-        
+
+        if (editingCourseId === id) {
+          return <CourseForm key={id} course={course} onCancel={handleCancel} updateCourse={updateCourse} />;
+        }
+
         const isSelected = selectedCourses.has(id);
         let cardStyle = "course-card";
-        
         if (isSelected) {
           cardStyle = "course-card-selected";
         } else if (isConflicting(course)) {
@@ -39,18 +54,14 @@ const CourseList = ({ courses, selectedTerm, selectedCourses, setSelectedCourses
         }
 
         return (
-          <div
-            key={id}
-            className={cardStyle}
-            onClick={() => toggleCourse(id)}
-          >
+          <div key={id} className={cardStyle} onClick={() => toggleCourse(id)}>
             <div className="course-title-section">
               <div className="course-title">{`${course.term} CS ${course.number}`}</div>
               <div>{course.title}</div>
             </div>
             <hr />
             <div className="course-meets">{course.meets}</div>
-            <button onClick={(e) => { e.stopPropagation(); startEditing(id); }}>Edit</button>
+            <button onClick={(e) => handleEdit(id, e)}>Edit</button>
           </div>
         );
       })}
