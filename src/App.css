@@ -103,3 +103,9 @@ button {
   padding: 5px;
   cursor: pointer;
 }
+
+.course-card-conflict {
+  border: 2px solid red;
+  padding: 16px;
+  text-align: center;
+}
