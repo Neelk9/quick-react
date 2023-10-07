@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "quick-react-59f8f",
     "public": "dist",
     "ignore": [
       "firebase.json",
