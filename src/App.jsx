@@ -1,26 +1,31 @@
-import { useState, useEffect } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect , useRef} from 'react';
 import Banner from './components/Banner';
-import CourseList from './components/CourseList';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useJsonQuery } from './utilities/fetch';
 import TermPage from './components/TermPage';
-import { setDbDocument } from './utilities/firebase';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { updateDbDocument, useDbData } from './utilities/firebase';
+import { useJsonQuery } from './utilities/fetch';
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [schedule, isLoading, error] = useJsonQuery('https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php');
+  const [schedule, setSchedule] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [firebaseData, errorFirebase] = useDbData('/');
+
+  
+  const [northwesternData, isLoadingNorthwestern, errorNorthwestern] = useJsonQuery('https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php');
 
   useEffect(() => {
-    if (schedule) {
-      setDbDocument('courses', 'northwestern', schedule)
-        .then(() => console.log("Data written to Firebase"))
-        .catch((error) => console.error("Error writing data: ", error));
+    if (northwesternData && !firebaseData) {
+      updateDbDocument('/', northwesternData);
     }
-  }, [schedule]);
+    if (firebaseData) {
+      setSchedule(firebaseData);
+      setIsLoading(false);
+    }
+  }, [northwesternData, firebaseData]);
+
+  const error = errorNorthwestern || errorFirebase;
 
   if (error) return <h1>Error: {`${error}`}</h1>;
   if (isLoading) return <h1>Fetching data...</h1>;
@@ -32,7 +37,6 @@ const App = () => {
       <TermPage courses={schedule.courses} />
     </div>
   );
-  
 };
 
 export default () => (

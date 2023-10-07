@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 
-const CourseForm = ({ course, onCancel, updateCourse }) => {
+import { updateDbDocument } from '../utilities/firebase';
+
+const CourseForm = ({ course, onCancel }) => {
   const [title, setTitle] = useState(course.title);
   const [meets, setMeets] = useState(course.meets);
   const [titleError, setTitleError] = useState('');
@@ -25,13 +27,14 @@ const CourseForm = ({ course, onCancel, updateCourse }) => {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const isTitleValid = validateTitle(title);
     const isMeetsValid = validateMeets(meets);
 
     if (isTitleValid && isMeetsValid) {
-      updateCourse({ ...course, title, meets });
+      const updatedCourse = { ...course, title, meets };
+      await updateDbDocument('courses', course.id, updatedCourse);
       onCancel(); // Close the form
     }
   };
