@@ -4,7 +4,7 @@ import CourseList from './CourseList';
 import CourseModal from './CourseModal';
 import CourseForm from './CourseForm';
 
-const TermPage = ({ courses }) => {
+const TermPage = ({ courses, updateCourse }) => {
   const [selectedTerm, setTerm] = useState("Fall");
   const [selectedCourses, setSelectedCourses] = useState(new Set());
   const [showModal, setShowModal] = useState(false);
@@ -32,6 +32,7 @@ const TermPage = ({ courses }) => {
         <CourseForm
           initialCourse={termCourses[editingCourseId]}
           onCancel={stopEditing}
+          updateCourse={updateCourse}
         />
       ) : (
         <CourseList
@@ -40,6 +41,7 @@ const TermPage = ({ courses }) => {
           selectedCourses={selectedCourses}
           setSelectedCourses={setSelectedCourses}
           startEditing={startEditing}
+          updateCourse={updateCourse}
         />
       )}
       <CourseModal

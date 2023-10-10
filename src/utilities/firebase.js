@@ -17,7 +17,7 @@ const firebase = initializeApp(firebaseConfig);
 const database = getDatabase(firebase);
 
 export const updateDbDocument = async (path, data) => {
-    console.log("Updating with data:", data);
+    console.log(data)
     const dbRef = ref(database, path); 
     await update(dbRef, data);
 };

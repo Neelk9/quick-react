@@ -4,7 +4,6 @@ import { doesConflict } from '../utilities/timeConflict';
 import CourseForm from './CourseForm';
 
 const CourseList = ({ courses, selectedTerm, selectedCourses, setSelectedCourses, updateCourse }) => {
-
   const [editingCourseId, setEditingCourseId] = useState(null);
   const [conflictingCourses, setConflictingCourses] = useState(new Set());
 
@@ -47,7 +46,7 @@ const CourseList = ({ courses, selectedTerm, selectedCourses, setSelectedCourses
 
         if (editingCourseId === id) {
           return <CourseForm key={id} course={course} onCancel={handleCancel} updateCourse={updateCourse} />;
-        }        
+        }
 
         const isSelected = selectedCourses.has(id);
         let cardStyle = "course-card";

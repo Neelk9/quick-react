@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 
-import { updateDbDocument } from '../utilities/firebase';
-
-const CourseForm = ({ course, onCancel }) => {
+const CourseForm = ({ course, onCancel, updateCourse }) => {
   const [title, setTitle] = useState(course.title);
   const [meets, setMeets] = useState(course.meets);
   const [titleError, setTitleError] = useState('');
@@ -31,14 +29,13 @@ const CourseForm = ({ course, onCancel }) => {
     e.preventDefault();
     const isTitleValid = validateTitle(title);
     const isMeetsValid = validateMeets(meets);
-
+  
     if (isTitleValid && isMeetsValid) {
       const updatedCourse = { ...course, title, meets };
-      await updateDbDocument('courses', course.id, updatedCourse);
+      updateCourse(updatedCourse, course.id);
       onCancel();
     }
   };
-  
 
   return (
     <form onSubmit={handleSubmit}>
