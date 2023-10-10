@@ -16,7 +16,7 @@ const App = () => {
   const [northwesternData, isLoadingNorthwestern, errorNorthwestern] = useJsonQuery('https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php');
 
   useEffect(() => {
-    if (northwesternData && !firebaseData) {
+    if (northwesternData) {
       updateDbDocument('/', northwesternData);
     }
     if (firebaseData) {
@@ -24,6 +24,7 @@ const App = () => {
       setIsLoading(false);
     }
   }, [northwesternData, firebaseData]);
+  
 
   const error = errorNorthwestern || errorFirebase;
 

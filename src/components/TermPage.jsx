@@ -26,7 +26,7 @@ const TermPage = ({ courses }) => {
     <div>
       <div className="term-header">
         <TermSelector setTerm={setTerm} />
-        <button className="course-plan-button" onClick={() => setShowModal(true)}>Course Plan</button>
+        <button className="small-button course-plan-button" onClick={() => setShowModal(true)}>Course Plan</button>
       </div>
       {editingCourseId ? (
         <CourseForm

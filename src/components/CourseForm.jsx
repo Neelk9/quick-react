@@ -35,9 +35,10 @@ const CourseForm = ({ course, onCancel }) => {
     if (isTitleValid && isMeetsValid) {
       const updatedCourse = { ...course, title, meets };
       await updateDbDocument('courses', course.id, updatedCourse);
-      onCancel(); // Close the form
+      onCancel();
     }
   };
+  
 
   return (
     <form onSubmit={handleSubmit}>

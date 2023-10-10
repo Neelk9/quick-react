@@ -1,8 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc, updateDoc, setDoc } from "firebase/firestore";  // Added getDoc here
-import { getAnalytics } from "firebase/analytics";
 import { useState, useEffect } from 'react';
-import { ref, onValue, getDatabase } from "firebase/database";
+import { getDatabase, ref, get, update, onValue } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAbMZjhudH1N7NKpbnyZ5KYao9f5hdptMs",
@@ -16,23 +14,27 @@ const firebaseConfig = {
 };
 
 const firebase = initializeApp(firebaseConfig);
-const analytics = getAnalytics(firebase);
-const firestore = getFirestore(firebase);
+const database = getDatabase(firebase);
 
 export const updateDbDocument = async (path, data) => {
-    const dbRef = firebase.database().ref(path);
-    await dbRef.update(data);
+    console.log("Updating with data:", data);
+    const dbRef = ref(database, path); 
+    await update(dbRef, data);
 };
 
-export const setDbDocument = async (collection, docId, data) => {
-  const docRef = doc(firestore, collection, docId);
-  await setDoc(docRef, data);
+export const setDbDocument = async (path, data) => {
+  const dbRef = ref(database, path);
+  await set(dbRef, data);
 };
 
 export const getDbDocument = async (path) => {
-    const dbRef = firebase.database().ref(path);
-    const snapshot = await dbRef.once('value');
+  const dbRef = ref(database, path);
+  const snapshot = await get(dbRef);
+  if (snapshot.exists()) {
     return snapshot.val();
+  } else {
+    throw new Error("No data available");
+  }
 };
 
 export const useDbData = (path) => {
@@ -40,7 +42,7 @@ export const useDbData = (path) => {
   const [error, setError] = useState(null);
   
   useEffect(() => {
-    const dbRef = ref(getDatabase(), path);
+    const dbRef = ref(database, path);
     const listener = onValue(dbRef, (snapshot) => {
       setData(snapshot.val());
     }, (err) => {
