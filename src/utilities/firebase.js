@@ -74,5 +74,11 @@ export const useDbData = (path) => {
     return [data, error];
   };
 
+export const isAdmin = async (uid) => {
+  const adminRef = ref(database, `admins/${uid}`);
+  const snapshot = await get(adminRef);
+  return snapshot.exists();
+};
+
 export default firebase;
 export const auth = getAuth(firebase);

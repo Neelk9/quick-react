@@ -2,11 +2,18 @@ import React, { useState, useEffect } from 'react';
 import '../App.css';
 import { doesConflict } from '../utilities/timeConflict';
 import CourseForm from './CourseForm';
-import { auth } from '../utilities/firebase';
+import { auth, isAdmin } from '../utilities/firebase';
 
 const CourseList = ({ courses, selectedTerm, selectedCourses, setSelectedCourses, updateCourse }) => {
   const [editingCourseId, setEditingCourseId] = useState(null);
   const [conflictingCourses, setConflictingCourses] = useState(new Set());
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      isAdmin(auth.currentUser.uid).then(isAdmin => setUserIsAdmin(isAdmin));
+    }
+  }, [auth.currentUser]);
 
   useEffect(() => {
     const newConflictingCourses = new Set();
@@ -69,7 +76,7 @@ const CourseList = ({ courses, selectedTerm, selectedCourses, setSelectedCourses
             </div>
             <hr />
             <div className="course-meets">{course.meets}</div>
-            {auth.currentUser && <button className="small-button" onClick={(e) => handleEdit(id, e)}>Edit</button>}
+            {userIsAdmin && <button className="small-button" onClick={(e) => handleEdit(id, e)}>Edit</button>}
           </div>
         );
       })}
