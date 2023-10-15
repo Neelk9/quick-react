@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 const CourseForm = ({ course, onCancel, updateCourse }) => {
   const [title, setTitle] = useState(course.title);
   const [meets, setMeets] = useState(course.meets);
+  const [term, setTerm] = useState(course.term);
+  const [number, setNumber] = useState(course.number);
   const [titleError, setTitleError] = useState('');
   const [meetsError, setMeetsError] = useState('');
 
@@ -25,14 +27,20 @@ const CourseForm = ({ course, onCancel, updateCourse }) => {
     return true;
   };
 
+  const generateCourseId = (term, number) => {
+    return `${term[0]}${number}`;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isTitleValid = validateTitle(title);
     const isMeetsValid = validateMeets(meets);
   
     if (isTitleValid && isMeetsValid) {
-      const updatedCourse = { ...course, title, meets };
-      updateCourse(updatedCourse, course.id);
+      const updatedCourse = { ...course, title, meets, term, number };
+      const courseIdToUpdate = generateCourseId(term, number);
+      console.log("Going to update course with ID:", courseIdToUpdate);
+      updateCourse(updatedCourse, courseIdToUpdate);
       onCancel();
     }
   };
@@ -60,6 +68,24 @@ const CourseForm = ({ course, onCancel, updateCourse }) => {
           onBlur={() => validateMeets(meets)}
         />
         {meetsError && <span>{meetsError}</span>}
+      </div>
+      <div>
+        <label htmlFor="term">Term:</label>
+        <input 
+          type="text" 
+          id="term" 
+          value={term} 
+          onChange={(e) => setTerm(e.target.value)} 
+        />
+      </div>
+      <div>
+        <label htmlFor="number">Number:</label>
+        <input 
+          type="text" 
+          id="number" 
+          value={number} 
+          onChange={(e) => setNumber(e.target.value)} 
+        />
       </div>
       <button type="button" onClick={onCancel}>Cancel</button>
       <button type="submit">Submit</button>

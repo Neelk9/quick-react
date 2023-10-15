@@ -1,14 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getDatabase, ref, onValue } from "firebase/database";
 import TermSelector from './TermSelector';
 import CourseList from './CourseList';
 import CourseModal from './CourseModal';
 import CourseForm from './CourseForm';
+import { updateDbDocument } from '../utilities/firebase';
 
-const TermPage = ({ courses, updateCourse }) => {
+const TermPage = ({ updateCourse }) => {
   const [selectedTerm, setTerm] = useState("Fall");
   const [selectedCourses, setSelectedCourses] = useState(new Set());
   const [showModal, setShowModal] = useState(false);
   const [editingCourseId, setEditingCourseId] = useState(null);
+  const [courses, setCourses] = useState({});
+
+  useEffect(() => {
+    const db = getDatabase();
+    const coursesRef = ref(db, 'courses');
+    const listener = onValue(coursesRef, (snapshot) => {
+      setCourses(snapshot.val());
+    });
+
+    return () => {
+      listener();
+    };
+  }, []);
 
   const startEditing = (id) => {
     setEditingCourseId(id);
@@ -22,6 +37,19 @@ const TermPage = ({ courses, updateCourse }) => {
     Object.entries(courses).filter(([, course]) => course.term === selectedTerm)
   );
 
+  const updateCourseAndState = async (updatedCourse, id) => {
+    console.log(`Updating path courses/${id} with data:`, updatedCourse);
+    await updateDbDocument(`courses/${id}`, updatedCourse).catch(err => console.error("DB Update Error: ", err));
+    
+    setCourses(prevCourses => {
+      console.log("Previous Courses:", prevCourses);
+      return {
+        ...prevCourses,
+        [id]: updatedCourse
+      };
+    });
+  };
+
   return (
     <div>
       <div className="term-header">
@@ -32,7 +60,7 @@ const TermPage = ({ courses, updateCourse }) => {
         <CourseForm
           initialCourse={termCourses[editingCourseId]}
           onCancel={stopEditing}
-          updateCourse={updateCourse}
+          updateCourse={updateCourseAndState}
         />
       ) : (
         <CourseList
@@ -41,7 +69,7 @@ const TermPage = ({ courses, updateCourse }) => {
           selectedCourses={selectedCourses}
           setSelectedCourses={setSelectedCourses}
           startEditing={startEditing}
-          updateCourse={updateCourse}
+          updateCourse={updateCourseAndState}
         />
       )}
       <CourseModal

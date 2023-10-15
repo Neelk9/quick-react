@@ -17,9 +17,25 @@ const firebase = initializeApp(firebaseConfig);
 const database = getDatabase(firebase);
 
 export const updateDbDocument = async (path, data) => {
-    console.log(data)
-    const dbRef = ref(database, path); 
-    await update(dbRef, data);
+    try {
+      const dbRef = ref(database, path);
+      await update(dbRef, data);
+      console.log(`Updated ${path} successfully.`);
+    } catch (error) {
+      console.error("Failed to update document:", error);
+      throw error;
+    }
+  };
+
+export const useDbUpdate = (path) => {
+    const [result, setResult] = useState();
+    const updateData = useCallback((value) => {
+        update(ref(database, path), value)
+            .then(() => setResult(makeResult()))
+            .catch((error) => setResult(makeResult(error)))
+    }, [database, path]);
+
+    return [updateData, result];
 };
 
 export const setDbDocument = async (path, data) => {
