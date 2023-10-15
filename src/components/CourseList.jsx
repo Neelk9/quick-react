@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../App.css';
 import { doesConflict } from '../utilities/timeConflict';
 import CourseForm from './CourseForm';
+import { auth } from '../utilities/firebase';
 
 const CourseList = ({ courses, selectedTerm, selectedCourses, setSelectedCourses, updateCourse }) => {
   const [editingCourseId, setEditingCourseId] = useState(null);
@@ -43,11 +44,11 @@ const CourseList = ({ courses, selectedTerm, selectedCourses, setSelectedCourses
     <div className="grid-container">
       {Object.entries(courses).map(([id, course]) => {
         if (course.term !== selectedTerm) return null;
-
+  
         if (editingCourseId === id) {
           return <CourseForm key={id} course={course} onCancel={handleCancel} updateCourse={updateCourse} />;
         }
-
+  
         const isSelected = selectedCourses.has(id);
         let cardStyle = "course-card";
         if (isSelected) {
@@ -55,7 +56,7 @@ const CourseList = ({ courses, selectedTerm, selectedCourses, setSelectedCourses
         } else if (conflictingCourses.has(id)) {
           cardStyle = "course-card-conflict";
         }
-
+  
         return (
           <div 
             key={id} 
@@ -68,12 +69,12 @@ const CourseList = ({ courses, selectedTerm, selectedCourses, setSelectedCourses
             </div>
             <hr />
             <div className="course-meets">{course.meets}</div>
-            <button className="small-button" onClick={(e) => handleEdit(id, e)}>Edit</button>
+            {auth.currentUser && <button className="small-button" onClick={(e) => handleEdit(id, e)}>Edit</button>}
           </div>
         );
       })}
     </div>
-  );
+  );  
 };
 
 export default CourseList;

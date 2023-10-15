@@ -2,10 +2,19 @@ import { useEffect, useState } from 'react';
 import { useDbData, updateDbDocument } from './utilities/firebase';
 import Banner from './components/Banner';
 import TermPage from './components/TermPage';
+import { auth } from './utilities/firebase';
 
 const App = () => {
   const [schedule, setSchedule] = useState(null);
   const [firebaseData, errorFirebase] = useDbData('/courses/');
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      setUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
   
   useEffect(() => {
     if (firebaseData) setSchedule(firebaseData);
@@ -32,7 +41,7 @@ const App = () => {
 
   return (
     <div>
-      <Banner title={schedule.title} />
+      <Banner title={"CS Classes for 2018-2019"} />
       <TermPage updateCourse={updateCourseAndState} />
     </div>
   );

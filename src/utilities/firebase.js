@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { useState, useEffect } from 'react';
+import { getAuth } from 'firebase/auth';
 import { getDatabase, ref, get, update, onValue } from "firebase/database";
 
 const firebaseConfig = {
@@ -54,23 +55,24 @@ export const getDbDocument = async (path) => {
 };
 
 export const useDbData = (path) => {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-  
-  useEffect(() => {
-    const dbRef = ref(database, path);
-    const listener = onValue(dbRef, (snapshot) => {
-      setData(snapshot.val());
-    }, (err) => {
-      setError(err);
-    });
+    const [data, setData] = useState(null);
+    const [error, setError] = useState(null);
     
-    return () => {
-      listener();
-    };
-  }, [path]);
-  
-  return [data, error];
-};
+    useEffect(() => {
+      const dbRef = ref(database, path);
+      const listener = onValue(dbRef, (snapshot) => {
+        setData(snapshot.val());
+      }, (err) => {
+        setError(err);
+      });
+      
+      return () => {
+        listener();
+      };
+    }, [path]);
+    
+    return [data, error];
+  };
 
 export default firebase;
+export const auth = getAuth(firebase);
