@@ -69,6 +69,7 @@ const CourseList = ({ courses, selectedTerm, selectedCourses, setSelectedCourses
             key={id} 
             className={cardStyle} 
             onClick={() => toggleCourse(id)}
+            data-cy="course"
           >
             <div className="course-title-section">
               <div className="course-title">{`${course.term} CS ${course.number}`}</div>
