@@ -5,6 +5,5 @@ describe ('Test App', () => {
   });
 
   it ('opens with Fall CS courses', () => {
-    cy.visit ('/');
-    cy.get('[data-cy=course]').should('contain', 'Fall CS');
-});
+    cy.visit ('/');cy.get('[data-cy=course]').should('contain', 'Fall CS');
+  });
