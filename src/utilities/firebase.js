@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { useState, useEffect } from 'react';
-import { getAuth } from 'firebase/auth';
-import { getDatabase, ref, get, update, onValue } from "firebase/database";
+import { getAuth, signInWithCredential, connectAuthEmulator } from 'firebase/auth';
+import { getDatabase, ref, get, update, onValue, connectDatabaseEmulator } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAbMZjhudH1N7NKpbnyZ5KYao9f5hdptMs",
@@ -16,6 +16,20 @@ const firebaseConfig = {
 
 const firebase = initializeApp(firebaseConfig);
 const database = getDatabase(firebase);
+
+if (!globalThis.EMULATION && import.meta.env.MODE === "development") {
+	connectAuthEmulator(auth, "http://127.0.0.1:9099");
+	connectDatabaseEmulator(database, "127.0.0.1", 9000);
+
+	signInWithCredential(
+		auth,
+		GoogleAuthProvider.credential(
+			'{"sub": "qEvli4msW0eDz5mSVO6j3W7i8w1k", "email": "tester@gmail.com", "displayName":"Test User", "email_verified": true}'
+		)
+	);
+
+	globalThis.EMULATION = true;
+}
 
 export const updateDbDocument = async (path, data) => {
     try {
